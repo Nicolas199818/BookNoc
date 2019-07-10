@@ -2,6 +2,7 @@ package com.example.booknoc;
 
 import android.util.Log;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import retrofit2.Call;
@@ -11,10 +12,9 @@ import retrofit2.Retrofit;
 import retrofit2.converter.gson.GsonConverterFactory;
 
 public class NetworkProvider {
-    MyBookService myBookService;
+    BookService bookService;
     String apiKey = "bJcf9kNxaqqFBu3DnnolIf2CLnAgOe0p";
 
-    //On fait de cette classe un Singleton.
     private static NetworkProvider instance;
 
     public static NetworkProvider getInstance() {
@@ -24,41 +24,40 @@ public class NetworkProvider {
         return instance;
     }
 
-    //On creer le constructeur de la classe.
     private NetworkProvider() {
         Retrofit retrofit = new Retrofit.Builder().baseUrl("https://api.nytimes.com/svc/books/v3/")
                 .addConverterFactory(GsonConverterFactory.create())
                 .build();
 
-       myBookService = retrofit.create(MyBookService.class);
+        bookService = retrofit.create(BookService.class);
     }
 
+    public void getBook(final Listener<List<Book>> listener){
+        Call<ResponseApi> call = bookService.getBooks(apiKey,"hardcover-fiction");
 
-    public void getBook(final Listener<List<Book>> listener) {
-        Log.d("DEBUG","On rentre biens dans la fonction getBook de Network Provider");
-        Log.d("DEDEBUG",myBookService.getBooks(apiKey,"hardcover-fiction").request().toString());
-        myBookService.getBooks(apiKey,"hardcover-fiction").enqueue(new Callback<List<BookDTO>>() {
-
-            @Override public void onResponse(Call call, Response response) {
-                Log.d("DEBUG","On rentre bien dans la réponse à l'appel API. Ce qui est bizarre car ça devrait planter.");
-                //Comment les transformer en book.
-                //List<BookDTO> bookDTOList = response.body();
-                //List<Book> bookList = BookMapper.map(bookDTOList);
-                //listener.onSuccess(bookList);
+        call.enqueue(new Callback<ResponseApi>() {
+            @Override
+            public void onResponse(Call<ResponseApi> call, Response<ResponseApi> response) {
+                Log.v("DEBUG",String.valueOf(response.body().getResults().get(0).getBook_details().get(0).getTitle()));
+                //C'est ici que l'on transmettra les données
+                List<Book> listBook = new ArrayList<>();
+                listBook.add(new Book("Harry Potter"));
+                listBook.add(new Book("Lord of the ring"));
+                listBook.add(new Book("Harry"));
+                listener.onSuccess(listBook);
             }
 
-            @Override public void onFailure(Call<List<BookDTO>> call, Throwable t) {
-                Log.d("DEBUG","On rentre bien dans la fonction qui indique que ça plante");
-                listener.onError(t);
+            @Override
+            public void onFailure(Call<ResponseApi> call, Throwable t) {
+                Log.d("DEBUG","Fuyer, fuyer pauvres fo");
+
             }
         });
     }
 
-    public interface Listener<T> {
+    public interface Listener<T>{
         void onSuccess(T data);
-
         void onError(Throwable t);
     }
 }
-
-//En premier, on va essayer de récupérer les données de listes.json.
+//On pourra récupérer avec le Listener.

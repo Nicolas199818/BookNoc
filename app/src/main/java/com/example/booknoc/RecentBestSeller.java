@@ -78,12 +78,16 @@ public class RecentBestSeller extends Fragment {
         recyclerView.setLayoutManager(new LinearLayoutManager(getActivity()));
         //On creer une liste de test que l'on va passé à la recycler View
         NetworkProvider.getInstance().getBook(new NetworkProvider.Listener<List<Book>>() {
-            @Override public void onSuccess(List<Book> data) {
-                Log.d("ChooseWeaponActivity", data.toString());
+            @Override
+            public void onSuccess(List<Book> data) {
+                for(Book book:data){
+                    Log.d("FrontDebug",book.title);
+                }
             }
 
-            @Override public void onError(Throwable t) {
-                Log.d("Super Debug","it's a fail ahahahahahha");
+            @Override
+            public void onError(Throwable t) {
+
             }
         });
         List<Book> listBook = new ArrayList<>();
