@@ -32,16 +32,23 @@
             android:textStyle="bold"
             />
 
-        <EditText
-            android:id="@+id/search_selecter"
+        <TextView
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginEnd="20dp"
-            android:layout_marginStart="20dp"
-            android:layout_marginTop="20dp"
-            android:hint="category"
-            android:inputType="text"
+            android:text="Choose one Category"
+            android:layout_marginTop="50dp"
+            android:textColor="@color/colorPrimary"
+            android:textSize="16sp"
+
             />
+
+        <Spinner
+            android:layout_width="match_parent"
+            android:layout_height="30dp"
+            android:id="@+id/spinner"
+            android:layout_marginTop="15dp">
+        </Spinner>
+
 
 
 
@@ -65,8 +72,20 @@
             android:layout_marginEnd="20dp"
             android:layout_marginStart="20dp"
             android:layout_marginTop="20dp"
-            android:text="chercher"
-            android:onClick="onDateClick"
+            android:text="search"
+            />
+
+        <TextView
+            android:id="@+id/label_error"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="30dp"
+            android:gravity="center"
+            android:text="Please enter a date"
+            android:textColor="#FF0000"
+            android:textSize="20sp"
+            android:textStyle="bold"
+            android:visibility="invisible"
             />
     </LinearLayout>
 

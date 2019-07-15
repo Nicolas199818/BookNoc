@@ -34,8 +34,10 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
         signInButton = findViewById(R.id.sign_in_button);
         signInButton.setSize(SignInButton.SIZE_STANDARD);
         signInButton.setOnClickListener(this);
+        findViewById(R.id.root_login).getBackground().setAlpha(120);
 
-        textView.setText("BOOK NOC : Read them All");
+
+        textView.setText("BOOK NOC");
 
     }
 

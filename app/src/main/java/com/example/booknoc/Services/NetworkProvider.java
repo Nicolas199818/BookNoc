@@ -48,7 +48,7 @@ public class NetworkProvider {
     }
 
     public void getBook(String category,final Listener<List<Book>> listener){
-        Call<ResponseApi> call = bookService.getBooks(apiKey,"hardcover-fiction");
+        Call<ResponseApi> call = bookService.getBooks(apiKey,category);
 
         call.enqueue(new Callback<ResponseApi>() {
             @Override
@@ -97,7 +97,7 @@ public class NetworkProvider {
     }
 
 
-    public void getBookHistory(String category,final Listener<List<Book>> listener){
+    public void getBookHistory(final Listener<List<Book>> listener){
         Call<ResponseApiNYHistory> call = bookService.getBooksHistory(apiKey);
 
         call.enqueue(new Callback<ResponseApiNYHistory>() {

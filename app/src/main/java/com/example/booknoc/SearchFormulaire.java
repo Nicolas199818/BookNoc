@@ -10,8 +10,11 @@ import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.Spinner;
+import android.widget.TextView;
 
 import com.example.booknoc.Fragment.AdvancedSearch;
 
@@ -39,8 +42,9 @@ public class SearchFormulaire extends Fragment {
     private String mParam2;
     //On déclare les attributs dont on aura besoin pour la suite.
     private EditText date;
-    private EditText category;
     private Button searchButton;
+    private Spinner spinner;
+    private TextView labalError;
 
     private OnFragmentInteractionListener mListener;
     DatePickerDialog datePickerDialog;
@@ -102,13 +106,25 @@ public class SearchFormulaire extends Fragment {
 
         View view = inflater.inflate(R.layout.fragment_search_formulaire, container, false);
         initDatePicker(getActivity());
-        this.category = view.findViewById(R.id.search_selecter);
         this.date = view.findViewById(R.id.search_date);
+        //On paramètre le Spinner :
+        spinner = view.findViewById(R.id.spinner);
+        ArrayAdapter<String> arrayAdapter= new ArrayAdapter<String>(this.getContext(),android.R.layout.simple_spinner_item,CateogoryBestSellerTitle.getInstance().getListCategory());
+        spinner.setAdapter(arrayAdapter);
+        this.labalError = view.findViewById(R.id.label_error);
         this.searchButton = view.findViewById(R.id.search_chercher);
         searchButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                ((MainActivity)getActivity()).changeFragment(new AdvancedSearch());
+                if(!date.getText().toString().equals("")) {
+                    AdvancedSearch advanced = new AdvancedSearch();
+                    advanced.setDate(date.getText().toString());
+                    advanced.setCategorie(spinner.getSelectedItem().toString());
+                    ((MainActivity) getActivity()).changeFragment(advanced);
+                }
+                else {
+                    labalError.setVisibility(View.VISIBLE);
+                }
             }
         });
         date.setOnClickListener(new View.OnClickListener() {

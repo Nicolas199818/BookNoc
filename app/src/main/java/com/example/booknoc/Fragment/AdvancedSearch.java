@@ -32,6 +32,8 @@ import java.util.List;
 public class AdvancedSearch extends Fragment {
     private RecyclerView recyclerView;
     private BookAdapter mAdapter;
+    private String date;
+    private String categorie;
     // TODO: Rename parameter arguments, choose names that match
     // the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
     private static final String ARG_PARAM1 = "param1";
@@ -41,10 +43,19 @@ public class AdvancedSearch extends Fragment {
     private String mParam1;
     private String mParam2;
 
+    public void setDate(String date){
+        this.date = date;
+    }
+
+    public void setCategorie(String categorie){
+        this.categorie = categorie;
+    }
+
+
     private OnFragmentInteractionListener mListener;
 
-    public AdvancedSearch() {
-        // Required empty public constructor
+    public AdvancedSearch(){
+
     }
 
     /**
@@ -84,7 +95,7 @@ public class AdvancedSearch extends Fragment {
         CateogoryBestSellerTitle categoryList = CateogoryBestSellerTitle.getInstance();
         final List<Book> listBooksToAdapter = new ArrayList<>();
 
-        NetworkProvider.getInstance().getBookSearch(categoryList.getListCategory().get(1),"date",new NetworkProvider.Listener<List<Book>>() {
+        NetworkProvider.getInstance().getBookSearch(categorie,date,new NetworkProvider.Listener<List<Book>>() {
             @Override
             public void onSuccess(List<Book> data) {
                 for(final Book book:data){

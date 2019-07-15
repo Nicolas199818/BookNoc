@@ -19,6 +19,7 @@ import com.example.booknoc.Services.NetworkProvider;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Random;
 
 
 /**
@@ -83,8 +84,10 @@ public class HistoryFragment extends Fragment {
         //On creer une liste de test que l'on va passé à la recycler View
         CateogoryBestSellerTitle categoryList = CateogoryBestSellerTitle.getInstance();
         final List<Book> listBooksToAdapter = new ArrayList<>();
+        Random r = new Random();
+        int index = r.nextInt(categoryList.getListCategory().size() - 1);
 
-        NetworkProvider.getInstance().getBookHistory(categoryList.getListCategory().get(0),new NetworkProvider.Listener<List<Book>>() {
+        NetworkProvider.getInstance().getBookHistory(new NetworkProvider.Listener<List<Book>>() {
             @Override
             public void onSuccess(List<Book> data) {
                 for(final Book book:data){

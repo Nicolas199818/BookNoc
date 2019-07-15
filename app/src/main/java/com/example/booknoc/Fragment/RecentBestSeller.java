@@ -20,6 +20,7 @@ import com.example.booknoc.RecyclerView.BookAdapter;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Locale;
+import java.util.Random;
 
 
 /**
@@ -86,8 +87,9 @@ public class RecentBestSeller extends Fragment {
         //On creer une liste de test que l'on va passé à la recycler View
         CateogoryBestSellerTitle categoryList = CateogoryBestSellerTitle.getInstance();
         final List<Book> listBooksToAdapter = new ArrayList<>();
-
-        NetworkProvider.getInstance().getBook(categoryList.getListCategory().get(0),new NetworkProvider.Listener<List<Book>>() {
+        Random r = new Random();
+        int index = r.nextInt(categoryList.getListCategory().size() - 1);
+        NetworkProvider.getInstance().getBook(categoryList.getListCategory().get(index),new NetworkProvider.Listener<List<Book>>() {
             @Override
             public void onSuccess(List<Book> data) {
                 for(final Book book:data){
@@ -166,9 +168,12 @@ public class RecentBestSeller extends Fragment {
 
 //Quels sont les prochaines étapes ?
     //Changer les détails graphiques (images & Couleurs dans le menu / taille des images pour pas qu'elles soient flous)
+// Mise en place d'un sélecteur avec toutes les catégories.
+// Vérifier que les données ne sont pas nulls et afficher un label sinon.
+// La première catégorie sur l'écran récent se lance en randoms.
+// La catégorie pour l'historique se lance également en random.
+
     // Ajout de la description à la place du prix dans les cellules.
-    // Mise en place d'un sélecteur avec toutes les catégories.
-    // Vérifier que les données ne sont pas nulls et afficher un label sinon.
-    // La première catégorie sur l'écran récent se lance en randoms.
-    // La catégorie pour l'historique se lance également en random.
+
+
     // Dans le cas où il reste du temps --> Implémenter une fonction de recherche.
