@@ -7,28 +7,15 @@
         <item
             android:id="@+id/recent_best_seller"
             android:icon="@drawable/ic_menu_camera"
-            android:title="Recents Best Seller" />
+            android:title="Recents Best Sellers List" />
         <item
             android:id="@+id/advanced_search"
             android:icon="@drawable/ic_menu_gallery"
-            android:title="Recherche Avancée livres" />
+            android:title="Search Best Sellers List" />
         <item
             android:id="@+id/random_list"
             android:icon="@drawable/ic_menu_slideshow"
-            android:title="Random List" />
+            android:title="Best Sellers list history" />
     </group>
-
-    <item android:title="Communicate">
-        <menu>
-            <item
-                android:id="@+id/nav_share"
-                android:icon="@drawable/ic_menu_share"
-                android:title="@string/menu_share" />
-            <item
-                android:id="@+id/nav_send"
-                android:icon="@drawable/ic_menu_send"
-                android:title="@string/menu_send" />
-        </menu>
-    </item>
 
 </menu>

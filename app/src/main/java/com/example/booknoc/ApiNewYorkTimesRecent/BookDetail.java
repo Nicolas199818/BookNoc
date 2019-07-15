@@ -1,4 +1,4 @@
-package com.example.booknoc;
+package com.example.booknoc.ApiNewYorkTimesRecent;
 
 public class BookDetail {
     private String title;

@@ -1,4 +1,4 @@
-package com.example.booknoc;
+package com.example.booknoc.Fragment;
 
 import android.content.Context;
 import android.net.Uri;
@@ -11,8 +11,15 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
+import com.example.booknoc.CateogoryBestSellerTitle;
+import com.example.booknoc.Data_Application.Book;
+import com.example.booknoc.Services.NetworkProvider;
+import com.example.booknoc.R;
+import com.example.booknoc.RecyclerView.BookAdapter;
+
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Locale;
 
 
 /**
@@ -25,7 +32,7 @@ import java.util.List;
  */
 public class RecentBestSeller extends Fragment {
     private RecyclerView recyclerView;
-    private RecyclerView.Adapter mAdapter;
+    private BookAdapter mAdapter;
 
     // TODO: Rename parameter arguments, choose names that match
     // the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
@@ -77,11 +84,29 @@ public class RecentBestSeller extends Fragment {
         recyclerView = view.findViewById(R.id.recycler_view_recent);
         recyclerView.setLayoutManager(new LinearLayoutManager(getActivity()));
         //On creer une liste de test que l'on va passé à la recycler View
-        NetworkProvider.getInstance().getBook(new NetworkProvider.Listener<List<Book>>() {
+        CateogoryBestSellerTitle categoryList = CateogoryBestSellerTitle.getInstance();
+        final List<Book> listBooksToAdapter = new ArrayList<>();
+
+        NetworkProvider.getInstance().getBook(categoryList.getListCategory().get(0),new NetworkProvider.Listener<List<Book>>() {
             @Override
             public void onSuccess(List<Book> data) {
-                for(Book book:data){
-                    Log.d("FrontDebug",book.title);
+                for(final Book book:data){
+                    Log.d("FrontDebug",book.getTitle());
+                    NetworkProvider.getInstance().getBookGoogleImage(book.getTitle(),new NetworkProvider.Listener<String>() {
+                        @Override
+                        public void onSuccess(String data) {
+                            Log.i("DEBUGFRONTGOOGLE",data);
+                            //C'est ici que l'on ajoute les livres
+                            book.setImage(data);
+                            mAdapter.aditem(book);
+                            mAdapter.notifyDataSetChanged();
+
+                        }
+
+                        @Override
+                        public void onError(Throwable t) {
+                        }
+                    });
                 }
             }
 
@@ -90,15 +115,16 @@ public class RecentBestSeller extends Fragment {
 
             }
         });
-        List<Book> listBook = new ArrayList<>();
-        listBook.add(new Book("Harry Potter"));
-        listBook.add(new Book("Le seigneur des anneaux"));
-        listBook.add(new Book("tout le monde n'a pas eu la chance de rater ses études"));
+        Log.i("TEST",""+listBooksToAdapter.size());
 
-        //Gestion de l'adapter :
-        // specify an adapter (see also next example)
+        List<Book> listBook = new ArrayList<>();
+
+
+        //Pour chaque
         mAdapter = new BookAdapter(listBook);
         recyclerView.setAdapter(mAdapter);
+
+
 
         return view;
     }
@@ -136,3 +162,13 @@ public class RecentBestSeller extends Fragment {
         void onFragmentInteraction(Uri uri);
     }
 }
+
+
+//Quels sont les prochaines étapes ?
+    //Changer les détails graphiques (images & Couleurs dans le menu / taille des images pour pas qu'elles soient flous)
+    // Ajout de la description à la place du prix dans les cellules.
+    // Mise en place d'un sélecteur avec toutes les catégories.
+    // Vérifier que les données ne sont pas nulls et afficher un label sinon.
+    // La première catégorie sur l'écran récent se lance en randoms.
+    // La catégorie pour l'historique se lance également en random.
+    // Dans le cas où il reste du temps --> Implémenter une fonction de recherche.

@@ -1,23 +1,37 @@
-package com.example.booknoc;
+package com.example.booknoc.Fragment;
 
 import android.content.Context;
 import android.net.Uri;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
+import android.support.v7.widget.LinearLayoutManager;
+import android.support.v7.widget.RecyclerView;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+
+import com.example.booknoc.CateogoryBestSellerTitle;
+import com.example.booknoc.Data_Application.Book;
+import com.example.booknoc.RecyclerView.BookAdapter;
+import com.example.booknoc.R;
+import com.example.booknoc.Services.NetworkProvider;
+
+import java.util.ArrayList;
+import java.util.List;
 
 
 /**
  * A simple {@link Fragment} subclass.
  * Activities that contain this fragment must implement the
- * {@link AdvancedSearch.OnFragmentInteractionListener} interface
+ * {@link HistoryFragment.OnFragmentInteractionListener} interface
  * to handle interaction events.
- * Use the {@link AdvancedSearch#newInstance} factory method to
+ * Use the {@link HistoryFragment#newInstance} factory method to
  * create an instance of this fragment.
  */
-public class AdvancedSearch extends Fragment {
+public class HistoryFragment extends Fragment {
+    private RecyclerView recyclerView;
+    private BookAdapter mAdapter;
     // TODO: Rename parameter arguments, choose names that match
     // the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
     private static final String ARG_PARAM1 = "param1";
@@ -29,7 +43,7 @@ public class AdvancedSearch extends Fragment {
 
     private OnFragmentInteractionListener mListener;
 
-    public AdvancedSearch() {
+    public HistoryFragment() {
         // Required empty public constructor
     }
 
@@ -39,11 +53,11 @@ public class AdvancedSearch extends Fragment {
      *
      * @param param1 Parameter 1.
      * @param param2 Parameter 2.
-     * @return A new instance of fragment AdvancedSearch.
+     * @return A new instance of fragment HistoryFragment.
      */
     // TODO: Rename and change types and number of parameters
-    public static AdvancedSearch newInstance(String param1, String param2) {
-        AdvancedSearch fragment = new AdvancedSearch();
+    public static HistoryFragment newInstance(String param1, String param2) {
+        HistoryFragment fragment = new HistoryFragment();
         Bundle args = new Bundle();
         args.putString(ARG_PARAM1, param1);
         args.putString(ARG_PARAM2, param2);
@@ -63,8 +77,53 @@ public class AdvancedSearch extends Fragment {
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
-        // Inflate the layout for this fragment
-        return inflater.inflate(R.layout.fragment_advanced_search, container, false);
+        View view = inflater.inflate(R.layout.fragment_recent_best_seller, container, false);
+        recyclerView = view.findViewById(R.id.recycler_view_recent);
+        recyclerView.setLayoutManager(new LinearLayoutManager(getActivity()));
+        //On creer une liste de test que l'on va passé à la recycler View
+        CateogoryBestSellerTitle categoryList = CateogoryBestSellerTitle.getInstance();
+        final List<Book> listBooksToAdapter = new ArrayList<>();
+
+        NetworkProvider.getInstance().getBookHistory(categoryList.getListCategory().get(0),new NetworkProvider.Listener<List<Book>>() {
+            @Override
+            public void onSuccess(List<Book> data) {
+                for(final Book book:data){
+                    Log.d("FrontDebug",book.getTitle());
+                    NetworkProvider.getInstance().getBookGoogleImage(book.getTitle(),new NetworkProvider.Listener<String>() {
+                        @Override
+                        public void onSuccess(String data) {
+                            Log.i("DEBUGFRONTGOOGLE",data);
+                            //C'est ici que l'on ajoute les livres
+                            book.setImage(data);
+                            mAdapter.aditem(book);
+                            mAdapter.notifyDataSetChanged();
+
+                        }
+
+                        @Override
+                        public void onError(Throwable t) {
+                        }
+                    });
+                }
+            }
+
+            @Override
+            public void onError(Throwable t) {
+
+            }
+        });
+        Log.i("TEST",""+listBooksToAdapter.size());
+
+        List<Book> listBook = new ArrayList<>();
+
+
+        //Pour chaque
+        mAdapter = new BookAdapter(listBook);
+        recyclerView.setAdapter(mAdapter);
+
+
+
+        return view;
     }
 
     // TODO: Rename method, update argument and hook method into UI event

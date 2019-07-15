@@ -1,30 +1,34 @@
 package com.example.booknoc;
 
+import android.app.DatePickerDialog;
 import android.content.Context;
+import android.content.Intent;
 import android.net.Uri;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
-import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Button;
+import android.widget.EditText;
 
-import java.util.ArrayList;
-import java.util.List;
+import com.example.booknoc.Fragment.AdvancedSearch;
+
+import java.text.SimpleDateFormat;
+import java.util.Calendar;
+import java.util.Locale;
 
 
 /**
  * A simple {@link Fragment} subclass.
  * Activities that contain this fragment must implement the
- * {@link RandomList.OnFragmentInteractionListener} interface
+ * {@link SearchFormulaire.OnFragmentInteractionListener} interface
  * to handle interaction events.
- * Use the {@link RandomList#newInstance} factory method to
+ * Use the {@link SearchFormulaire#newInstance} factory method to
  * create an instance of this fragment.
  */
-public class RandomList extends Fragment {
-    private RecyclerView recyclerView;
-    private RecyclerView.Adapter mAdapter;
+public class SearchFormulaire extends Fragment {
     // TODO: Rename parameter arguments, choose names that match
     // the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
     private static final String ARG_PARAM1 = "param1";
@@ -33,10 +37,15 @@ public class RandomList extends Fragment {
     // TODO: Rename and change types of parameters
     private String mParam1;
     private String mParam2;
+    //On déclare les attributs dont on aura besoin pour la suite.
+    private EditText date;
+    private EditText category;
+    private Button searchButton;
 
     private OnFragmentInteractionListener mListener;
+    DatePickerDialog datePickerDialog;
 
-    public RandomList() {
+    public SearchFormulaire() {
         // Required empty public constructor
     }
 
@@ -46,16 +55,34 @@ public class RandomList extends Fragment {
      *
      * @param param1 Parameter 1.
      * @param param2 Parameter 2.
-     * @return A new instance of fragment RandomList.
+     * @return A new instance of fragment SearchFormulaire.
      */
     // TODO: Rename and change types and number of parameters
-    public static RandomList newInstance(String param1, String param2) {
-        RandomList fragment = new RandomList();
+    public static SearchFormulaire newInstance(String param1, String param2) {
+        SearchFormulaire fragment = new SearchFormulaire();
         Bundle args = new Bundle();
         args.putString(ARG_PARAM1, param1);
         args.putString(ARG_PARAM2, param2);
         fragment.setArguments(args);
         return fragment;
+    }
+
+    private void initDatePicker(Context context) {
+        Calendar calendar = Calendar.getInstance();
+        int year = calendar.get(Calendar.YEAR);
+        int month = calendar.get(Calendar.MONTH);
+        int day = calendar.get(Calendar.DAY_OF_MONTH);
+
+        datePickerDialog = new DatePickerDialog(context, (view, year1, month1, dayOfMonth) -> {
+            String format = "dd/MM/yy";
+            SimpleDateFormat simpleDateFormat = new SimpleDateFormat(format, Locale.FRANCE);
+
+            calendar.set(Calendar.YEAR, year1);
+            calendar.set(Calendar.MONTH, month1);
+            calendar.set(Calendar.DAY_OF_MONTH, dayOfMonth);
+
+            date.setText(simpleDateFormat.format(calendar.getTime()));
+        }, year, month, day);
     }
 
     @Override
@@ -65,25 +92,31 @@ public class RandomList extends Fragment {
             mParam1 = getArguments().getString(ARG_PARAM1);
             mParam2 = getArguments().getString(ARG_PARAM2);
         }
+
     }
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         // Inflate the layout for this fragment
-        View view = inflater.inflate(R.layout.fragment_recent_best_seller, container, false);
-        recyclerView = view.findViewById(R.id.recycler_view_recent);
-        recyclerView.setLayoutManager(new LinearLayoutManager(getActivity()));
-        //On creer une liste de test que l'on va passé à la recycler View
-        List<Book> listBook = new ArrayList<>();
-        listBook.add(new Book("Random Harry Potter"));
-        listBook.add(new Book("Random Le seigneur des anneaux"));
-        listBook.add(new Book("Random tout le monde n'a pas eu la chance de rater ses études"));
 
-        //Gestion de l'adapter :
-        // specify an adapter (see also next example)
-        mAdapter = new BookAdapter(listBook);
-        recyclerView.setAdapter(mAdapter);
+        View view = inflater.inflate(R.layout.fragment_search_formulaire, container, false);
+        initDatePicker(getActivity());
+        this.category = view.findViewById(R.id.search_selecter);
+        this.date = view.findViewById(R.id.search_date);
+        this.searchButton = view.findViewById(R.id.search_chercher);
+        searchButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                ((MainActivity)getActivity()).changeFragment(new AdvancedSearch());
+            }
+        });
+        date.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                datePickerDialog.show();
+            }
+        });
 
         return view;
     }
